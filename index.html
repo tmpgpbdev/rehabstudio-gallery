@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.2/css/bulma.min.css">
+    </head>
+    <body>
+        <section class="hero is-primary is-medium">
+            <div class="hero-head">
+                <header class="nav">
+                    <div class="container">
+                        <div class="nav-left">
+                            <a class="nav-item">rehabstudio Gallery</a>
+                        </div>
+                        <div class="nav-right nav-menu">
+                            <a href="{{ auth_url|safe }}" class="nav-item" id="auth-link">{{ auth_url_text }}</a>
+                        </div>
+                    </div>
+                </header>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <div>
+                    <h1 class="title">Upload a photo</h1>
+                    <h2 class="subtitle">
+                      Add your own photos to the gallery
+                    </h2>
+                </div>
+
+                <div>
+                    <br>
+
+                    {% if user %}
+                        <form action="/upload" enctype="multipart/form-data" method="post">
+                            <div class="field is-grouped">
+                                <p class="control">
+                                    <input class="input" type="text" placeholder="Title" name="title" required>
+                                </p>
+                                <p class="control">
+                                    <input class="input" type="text" placeholder="Location" name="location" required>
+                                </p>
+                                <p class="control">
+                                    <span class="select">
+                                        <select name="is_public" required>
+                                            <option value="public">Pubic</option>
+                                            <option value="private">Private</option>
+                                        </select>
+                                    </span>
+                                </p>
+                            </div>
+
+                            <div class="field">
+                                <p class="control">
+                                    <textarea class="textarea" placeholder="Description" name="description" required></textarea>
+                                </p>
+                            </div>
+
+                            <div class="field is-grouped">
+                                <p class="control is-expanded">
+                                    Image:
+                                    <input type="file" name="image" required/>
+                                </p>
+
+                                <p class="control">
+                                    <button class="button is-primary" type="submit">Upload</button>
+                                </p>
+                            </div>
+                        </form>
+                    {% else %}
+                        <p>You must be logged in to upload a photo to the gallery.
+                            <a href="{{ auth_url|safe }}">Click here</a> to log in.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        {% if images.count() %}
+            <section class="section" style="background-color: whitesmoke;">
+                <div class="container">
+                    <div class="columns is-multiline">
+                        {% for img in images %}
+                            <div class="column is-4">
+                                <div class="card">
+                                    <div class="card-image">
+                                        <figure class="image is-4by4">
+                                            <img src="{{ img.image_url }}" alt="Image" />
+                                        </figure>
+                                    </div>
+                                    <div class="card-content">
+                                        <div class="media">
+                                            <div class="media-content">
+                                                <p class="title is-4">{{ img.title }}</p>
+                                                <p class="subtitle is-6">{{ img.location }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="content">
+                                            {{ img.description }}
+                                            <br>
+                                            <small>{{ img.date.strftime('%d/%m/%Y') }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+    </body>
+</html>
+{% endautoescape %}
